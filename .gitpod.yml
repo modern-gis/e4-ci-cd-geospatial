@@ -1,46 +1,20 @@
-name: "✅ Grade Brick E4"
+# File: .gitpod.yml
+image:
+  file: .gitpod.Dockerfile
 
-on:
-push:
-branches: [ main ]
-pull\_request:
-branches: [ main ]
-workflow\_dispatch:
-
-jobs:
-test:
-runs-on: ubuntu-latest
-
-```
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v3
-
-  - name: Set up Python
-    uses: actions/setup-python@v4
-    with:
-      python-version: 3.11
-
-  - name: Install system packages
-    run: |
-      sudo apt-get update
-      sudo apt-get install -y gdal-bin libgdal-dev build-essential
-
-  - name: Install Python dependencies
-    run: |
-      python -m pip install --upgrade pip
+tasks:
+  # Install dependencies and initialize Airflow DB
+  - init: |
+      pip install --upgrade pip
       pip install -r requirements.txt
-      pip install pytest flake8 requests geopandas fiona pyproj
+      airflow db init
+  # Run tests on workspace start
+  - command: pytest --maxfail=1 --disable-warnings -q
 
-  - name: Lint code
-    run: |
-      flake8 dags tests
+ports:
+  - port: 8080
+    onOpen: open-preview   # preview the Airflow webserver if started
 
-  - name: Run tests
-    run: |
-      pytest tests/
-
-  - name: ✅ Print badge proof
-    if: success()
-    run: |
-      echo "::notice title=Badge Unlocked::brick_e4_automation_$(date +%s)"
+vscode:
+  extensions:
+    - ms-python.python
