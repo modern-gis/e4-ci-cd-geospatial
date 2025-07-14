@@ -2,9 +2,9 @@ name: "✅ Grade Brick E4"
 
 on:
 push:
-branches: \[ main ]
+branches: [ main ]
 pull\_request:
-branches: \[ main ]
+branches: [ main ]
 workflow\_dispatch:
 
 jobs:
