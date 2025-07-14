@@ -1,19 +1,19 @@
-# File: .gitpod.yml
 image:
   file: .gitpod.Dockerfile
 
 tasks:
-  # Install dependencies and initialize Airflow DB
   - init: |
       pip install --upgrade pip
       pip install -r requirements.txt
-      airflow db init
-  # Run tests on workspace start
-  - command: pytest --maxfail=1 --disable-warnings -q
+      # use the new upgrade command in Airflow 3
+      airflow db upgrade
+      airflow connections create-default-connections
+  - command: |
+      pytest --maxfail=1 --disable-warnings -q
 
 ports:
   - port: 8080
-    onOpen: open-preview   # preview the Airflow webserver if started
+    onOpen: open-preview
 
 vscode:
   extensions:
