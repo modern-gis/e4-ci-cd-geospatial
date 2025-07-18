@@ -34,7 +34,7 @@ or click your Gitpod badge. Gitpod will build your image and install dependencie
 
    ```bash
    export AIRFLOW__CORE__LOAD_EXAMPLES=False
-   airflow db init
+   airflow db migrate
    # launch UI if you like:
    airflow webserver --port 8080 &  
    airflow scheduler &

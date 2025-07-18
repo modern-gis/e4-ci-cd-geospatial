@@ -17,7 +17,7 @@ LOCAL_CSV = "/tmp/StormEvents_details-ftp_v1.0_d2025_c20250520.csv"
 PARQUET_PATH = "/tmp/StormEvents_details-ftp_v1.0_d2025_c20250520.parquet"
 NOAA_ENDPOINT = (
     "pub/data/swdi/stormevents/csvfiles/"
-    "StormEvents_details-ftp_v1.0_d2025_c20250520.csv.gz"
+    "StormEvents_details-ftp_v1.0_d20250520.csv.gz"
 )
 
 def download_noaa_file():
@@ -47,15 +47,15 @@ default_args = {
 with DAG(
     dag_id="storm_events_pipeline",
     default_args=default_args,
-    schedule_interval="@daily",
+    schedule="@daily",
     catchup=False,
     tags=["E4", "ci-cd"],
 ) as dag:
 
     wait_for_noaa = HttpSensor(
         task_id="wait_for_noaa_file",
-        http_conn_id="noaa_http",            # set this in Airflow Connections
-        endpoint=NOAA_ENDPOINT,              # must include the exact filename
+        http_conn_id="noaa_http",
+        end_point=NOAA_ENDPOINT,            # ERROR #1: typo—should be `endpoint`
         response_check=lambda response: response.status_code == 200,
         poke_interval=60,
         timeout=600,
@@ -73,7 +73,7 @@ with DAG(
     )
 
     convert = PythonOperator(
-        task_id="convert_to_geoparquet",
+        task_id="convert_to_parquet",      # ERROR #2: wrong task_id—should be `convert_to_geoparquet`
         python_callable=convert_to_geoparquet,
     )
 
